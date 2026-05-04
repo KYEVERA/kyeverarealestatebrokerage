@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KEYVERA CRM V2</title>
+</head>
+<body style="font-family:Arial">
+
+<h1>📊 Dashboard</h1>
+
+<div id="stats"></div>
+
+<h2>Leads</h2>
+<div id="leads"></div>
+
+<script>
+const API = "https://YOUR-BACKEND.onrender.com";
+
+async function loadStats(){
+  const res = await fetch(API + "/stats");
+  const data = await res.json();
+
+  document.getElementById("stats").innerHTML =
+  `<p>Total: ${data.total} | Sold: ${data.sold} | Conversion: ${data.conversion}%</p>`;
+}
+
+async function loadLeads(){
+  const res = await fetch(API + "/leads");
+  const data = await res.json();
+
+  document.getElementById("leads").innerHTML = data.map(l => `
+    <div style="border:1px solid #000;padding:10px;margin:10px">
+      <b>${l.name}</b> - ${l.phone}<br>
+      Status:
+      <select onchange="update('${l._id}', this.value)">
+        <option ${l.status=="Lead جديد"?"selected":""}>Lead جديد</option>
+        <option ${l.status=="تم التواصل"?"selected":""}>تم التواصل</option>
+        <option ${l.status=="تم البيع"?"selected":""}>تم البيع</option>
+      </select>
+      <button onclick="del('${l._id}')">Delete</button>
+    </div>
+  `).join("");
+}
+
+async function update(id,status){
+  await fetch(API+"/leads/"+id,{
+    method:"PUT",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({status})
+  });
+}
+
+async function del(id){
+  await fetch(API+"/leads/"+id,{method:"DELETE"});
+  loadLeads();
+}
+
+loadStats();
+loadLeads();
+</script>
+
+</body>
+</html>
