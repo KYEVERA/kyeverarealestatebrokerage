@@ -2,310 +2,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KEYVERA Real Estate</title><style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
-
-body{
-background:#0b0b0b;
-color:white;
-}
-
-header{
-background:#000;
-padding:30px 20px;
-text-align:center;
-border-bottom:1px solid gold;
-}
-
-header img{
-width:90px;
-height:90px;
-object-fit:contain;
-margin-bottom:10px;
-}
-
-header h1{
-font-size:45px;
-letter-spacing:6px;
-color:gold;
-}
-
-header p{
-margin-top:5px;
-color:#ddd;
-}
-
-nav{
-padding:15px;
-background:#111;
-text-align:center;
-position:sticky;
-top:0;
-z-index:999;
-}
-
-nav a{
-color:gold;
-text-decoration:none;
-margin:0 15px;
-font-weight:bold;
-}
-
-.section{
-padding:60px 20px;
-max-width:1200px;
-margin:auto;
-}
-
-.section h2{
-text-align:center;
-margin-bottom:40px;
-font-size:35px;
-color:gold;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:25px;
-}
-
-.card{
-background:#151515;
-border-radius:20px;
-overflow:hidden;
-box-shadow:0 0 15px rgba(255,215,0,0.15);
-}
-
-.card img{
-width:100%;
-height:220px;
-object-fit:cover;
-}
-
-.card-content{
-padding:20px;
-}
-
-.price{
-font-size:22px;
-margin:15px 0;
-color:#00ffae;
-font-weight:bold;
-}
-
-.btn{
-display:inline-block;
-padding:10px 18px;
-background:gold;
-color:black;
-text-decoration:none;
-border-radius:10px;
-font-weight:bold;
-margin-top:10px;
-}
-
-.delete-btn{
-background:red;
-color:white;
-padding:8px 14px;
-border:none;
-border-radius:8px;
-margin-top:10px;
-cursor:pointer;
-}
-
-.admin-panel{
-background:#111;
-padding:25px;
-border-radius:20px;
-margin-top:40px;
-display:none;
-}
-
-.admin-panel input,
-.admin-panel textarea{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border:none;
-border-radius:10px;
-background:#222;
-color:white;
-}
-
-.admin-panel button{
-width:100%;
-padding:14px;
-background:gold;
-border:none;
-border-radius:10px;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.login-box{
-max-width:400px;
-margin:40px auto;
-background:#111;
-padding:25px;
-border-radius:20px;
-}
-
-.login-box input{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border:none;
-border-radius:10px;
-background:#222;
-color:white;
-}
-
-.login-box button{
-width:100%;
-padding:14px;
-background:gold;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.whatsapp{
-position:fixed;
-bottom:20px;
-left:20px;
-width:60px;
-height:60px;
-background:#25D366;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-text-decoration:none;
-color:white;
-}
+<title>KEYVERA Real Estate - Pro System</title><!-- Firebase --><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#0b0b0b;color:white;}
+header{background:#000;padding:25px;text-align:center;border-bottom:1px solid gold;}
+header img{width:90px;height:90px;object-fit:contain;margin-bottom:10px;}
+header h1{color:gold;letter-spacing:5px;}
+nav{background:#111;padding:12px;text-align:center;}
+nav a{color:gold;margin:0 12px;text-decoration:none;font-weight:bold;}
+.section{padding:50px 20px;max-width:1100px;margin:auto;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.card{background:#151515;border-radius:15px;overflow:hidden;}
+.card img{width:100%;height:200px;object-fit:cover;}
+.card-content{padding:15px;}
+.price{color:#00ffae;font-weight:bold;margin-top:10px;}
+.btn{display:inline-block;background:gold;color:#000;padding:8px 12px;border-radius:8px;text-decoration:none;margin-top:10px;}
+.admin-bar{background:#111;padding:10px;display:flex;gap:10px;justify-content:center;position:sticky;top:0;}
+.admin-bar input{padding:8px;border-radius:8px;border:none;background:#222;color:white;}
+.admin-bar button{padding:8px 12px;background:gold;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
+.admin-panel{display:none;background:#111;padding:20px;margin-top:20px;border-radius:15px;}
+.admin-panel input,.admin-panel textarea{width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none;background:#222;color:white;}
+.admin-panel button{width:100%;padding:12px;background:gold;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
 </style></head>
 <body><header>
-<img src="https://your-image-link.com/logo.png">
+<img id="logo">
 <h1>KEYVERA</h1>
 <p>REAL ESTATE BROKERAGE</p>
-<p>العجمي - الإسكندرية</p>
-</header><nav>
+</header><!-- ADMIN LOGIN --><div class="admin-bar">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="logout()">Logout</button>
+</div><nav>
 <a href="#properties">الشقق</a>
 <a href="#admin">الإدارة</a>
 </nav><section class="section" id="properties">
-<h2>الشقق المتاحة</h2>
-<div class="cards" id="propertiesContainer"></div>
+<h2 style="text-align:center;color:gold">العقارات</h2>
+<div class="cards" id="list"></div>
 </section><section class="section" id="admin">
-<h2>لوحة الإدارة</h2><div class="login-box" id="loginBox">
-<input type="password" id="adminPassword" placeholder="كلمة المرور">
-<button onclick="loginAdmin()">دخول</button>
-</div><div class="admin-panel" id="adminPanel">
-<input type="file" id="imageFile" accept="image/*">
-<input type="text" id="title" placeholder="اسم الشقة">
-<input type="text" id="location" placeholder="المنطقة">
-<input type="text" id="price" placeholder="السعر">
-<input type="text" id="space" placeholder="المساحة">
-<textarea id="description" placeholder="الوصف"></textarea>
-<button onclick="addProperty()">إضافة</button>
+<div class="admin-panel" id="panel">
+<h3 style="color:gold;text-align:center">لوحة التحكم</h3>
+<input type="file" id="img">
+<input type="file" id="logoFile">
+<input id="title" placeholder="العنوان">
+<input id="price" placeholder="السعر">
+<input id="location" placeholder="الموقع">
+<textarea id="desc" placeholder="الوصف"></textarea>
+<button onclick="add()">إضافة</button>
 </div>
-</section><a class="whatsapp" href="https://wa.me/201206369219">💬</a>
+</section><script>
 
-<script>
-const ADMIN_PASSWORD = "LUCIFERN2";
-
-function loginAdmin(){
-const pass = document.getElementById('adminPassword').value;
-if(pass === ADMIN_PASSWORD){
-document.getElementById('adminPanel').style.display='block';
-document.getElementById('loginBox').style.display='none';
-}else{
-alert('كلمة مرور غلط');
-}
-}
-
-function getProperties(){
-return JSON.parse(localStorage.getItem('properties')) || [];
-}
-
-function saveProperties(data){
-localStorage.setItem('properties', JSON.stringify(data));
-}
-
-function addProperty(){
-const file = document.getElementById('imageFile').files[0];
-const title = document.getElementById('title').value;
-const location = document.getElementById('location').value;
-const price = document.getElementById('price').value;
-const space = document.getElementById('space').value;
-const description = document.getElementById('description').value;
-
-if(!title || !price){
-alert('اكمل البيانات');
-return;
-}
-
-const reader = new FileReader();
-reader.onload = function(e){
-const img = e.target.result;
-
-const properties = getProperties();
-properties.push({title,location,price,space,description,image:img});
-saveProperties(properties);
-render();
+// Firebase Config (ضع بياناتك هنا)
+const firebaseConfig = {
+apiKey: "YOUR_KEY",
+authDomain: "YOUR_DOMAIN",
+projectId: "YOUR_ID",
+storageBucket: "YOUR_BUCKET",
+appId: "YOUR_APP"
 };
 
-if(file){
-reader.readAsDataURL(file);
-}else{
-alert('اختار صورة');
-}
-}
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-function deleteProperty(i){
-const data = getProperties();
-data.splice(i,1);
-saveProperties(data);
-render();
-}
-
-function render(){
-const container = document.getElementById('propertiesContainer');
-const data = getProperties();
-container.innerHTML='';
-
-if(data.length===0){
-container.innerHTML='<p>لا توجد شقق</p>';
-return;
-}
-
-data.forEach((p,i)=>{
-container.innerHTML += `
-<div class="card">
-<img src="${p.image}">
-<div class="card-content">
-<h3>${p.title}</h3>
-<p>${p.location}</p>
-<p>${p.space}</p>
-<p>${p.description}</p>
-<div class="price">${p.price}</div>
-<a class="btn" href="https://wa.me/201206369219">تواصل</a>
-<br>
-<button class="delete-btn" onclick="deleteProperty(${i})">حذف</button>
-</div>
-</div>`;
+// AUTH
+function login(){
+const email = email.value;
+const pass = password.value;
+auth.signInWithEmailAndPassword(email,pass)
+.then(()=>{
+document.getElementById('panel').style.display='block';
+alert('Logged in');
 });
 }
 
-render();
+function logout(){auth.signOut();document.getElementById('panel').style.display='none';}
+
+auth.onAuthStateChanged(user=>{
+if(user){document.getElementById('panel').style.display='block';}else{document.getElementById('panel').style.display='none';}
+});
+
+// ADD PROPERTY
+function add(){
+const file = img.files[0];
+const ref = storage.ref('images/'+file.name);
+ref.put(file).then(()=>{
+ref.getDownloadURL().then(url=>{
+db.collection('properties').add({
+title:title.value,
+price:price.value,
+location:location.value,
+desc:desc.value,
+image:url
+});
+load();
+});
+});
+}
+
+// LOAD
+function load(){
+db.collection('properties').onSnapshot(snap=>{
+list.innerHTML='';
+snap.forEach(doc=>{
+const d = doc.data();
+list.innerHTML+=`
+<div class="card">
+<img src="${d.image}">
+<div class="card-content">
+<h3>${d.title}</h3>
+<p>${d.location}</p>
+<p>${d.desc}</p>
+<div class="price">${d.price}</div>
+<a class="btn" href="https://wa.me/201206369219">تواصل</a>
+</div>
+</div>`;
+});
+});
+}
+
+load();
+
+// LOGO
+logoFile.onchange=()=>{
+const file = logoFile.files[0];
+const ref = storage.ref('logo/'+file.name);
+ref.put(file).then(()=>{
+ref.getDownloadURL().then(url=>{
+logo.src=url;
+});
+});
+};
+
 </script></body>
 </html>
