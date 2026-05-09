@@ -210,6 +210,7 @@ color:white;
 <input type="password" id="adminPassword" placeholder="كلمة المرور">
 <button onclick="loginAdmin()">دخول</button>
 </div><div class="admin-panel" id="adminPanel">
+<input type="file" id="logoFile" accept="image/*">
 <input type="file" id="imageFile" accept="image/*">
 <input type="text" id="title" placeholder="اسم الشقة">
 <input type="text" id="location" placeholder="المنطقة">
@@ -307,5 +308,32 @@ container.innerHTML += `
 }
 
 render();
+function loadLogo(){
+const logo = localStorage.getItem('logo');
+if(logo){
+const el = document.getElementById('logoPreview');
+if(el) el.src = logo;
+}
+}
+
+function saveLogo(file){
+const reader = new FileReader();
+reader.onload = function(e){
+localStorage.setItem('logo', e.target.result);
+loadLogo();
+};
+reader.readAsDataURL(file);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+const logoInput = document.getElementById('logoFile');
+if(logoInput){
+logoInput.addEventListener('change', function(){
+if(this.files && this.files[0]) saveLogo(this.files[0]);
+});
+}
+loadLogo();
+});
+
 </script></body>
 </html>
