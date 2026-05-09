@@ -17,19 +17,26 @@ color:white;
 
 header{
 background:#000;
-padding:40px 20px;
+padding:30px 20px;
 text-align:center;
 border-bottom:1px solid gold;
 }
 
+header img{
+width:90px;
+height:90px;
+object-fit:contain;
+margin-bottom:10px;
+}
+
 header h1{
-font-size:50px;
+font-size:45px;
 letter-spacing:6px;
 color:gold;
 }
 
 header p{
-margin-top:10px;
+margin-top:5px;
 color:#ddd;
 }
 
@@ -73,11 +80,6 @@ background:#151515;
 border-radius:20px;
 overflow:hidden;
 box-shadow:0 0 15px rgba(255,215,0,0.15);
-transition:0.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
 }
 
 .card img{
@@ -88,11 +90,6 @@ object-fit:cover;
 
 .card-content{
 padding:20px;
-}
-
-.card h3{
-margin-bottom:10px;
-color:gold;
 }
 
 .price{
@@ -113,33 +110,14 @@ font-weight:bold;
 margin-top:10px;
 }
 
-.btn:hover{
-opacity:0.8;
-}
-
-footer{
-background:#000;
-padding:25px;
-text-align:center;
-margin-top:40px;
-border-top:1px solid gold;
-}
-
-.whatsapp{
-position:fixed;
-bottom:20px;
-left:20px;
-width:60px;
-height:60px;
-background:#25D366;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-text-decoration:none;
+.delete-btn{
+background:red;
 color:white;
-z-index:999;
+padding:8px 14px;
+border:none;
+border-radius:8px;
+margin-top:10px;
+cursor:pointer;
 }
 
 .admin-panel{
@@ -200,78 +178,58 @@ font-weight:bold;
 cursor:pointer;
 }
 
-.delete-btn{
-background:red;
+.whatsapp{
+position:fixed;
+bottom:20px;
+left:20px;
+width:60px;
+height:60px;
+background:#25D366;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+text-decoration:none;
 color:white;
-padding:8px 14px;
-border:none;
-border-radius:8px;
-margin-top:10px;
-cursor:pointer;
-}
-
-@media(max-width:600px){
-header h1{
-font-size:35px;
-}
 }
 </style></head>
 <body><header>
+<img src="https://via.placeholder.com/150" id="logoPreview">
 <h1>KEYVERA</h1>
 <p>REAL ESTATE BROKERAGE</p>
 <p>العجمي - الإسكندرية</p>
 </header><nav>
-<a href="#about">عن الشركة</a>
 <a href="#properties">الشقق</a>
-<a href="#contact">تواصل معنا</a>
 <a href="#admin">الإدارة</a>
-</nav><section class="section" id="about">
-<h2>من نحن</h2>
-<p style="text-align:center;line-height:2;font-size:18px;max-width:900px;margin:auto;">
-شركة KEYVERA للوساطة العقارية متخصصة في بيع وشراء وتسويق العقارات في العجمي والإسكندرية.
-نقدم أفضل الشقق والعقارات بأفضل الأسعار مع خدمة احترافية.
-</p>
-</section><section class="section" id="properties">
-<h2>الشقق المتاحة</h2><div class="cards" id="propertiesContainer">
-</div>
+</nav><section class="section" id="properties">
+<h2>الشقق المتاحة</h2>
+<div class="cards" id="propertiesContainer"></div>
 </section><section class="section" id="admin">
 <h2>لوحة الإدارة</h2><div class="login-box" id="loginBox">
-<input type="password" id="adminPassword" placeholder="ادخل كلمة مرور الأدمن">
-<button onclick="loginAdmin()">دخول الإدارة</button>
-</div><div class="admin-panel" id="adminPanel"><input type="text" id="title" placeholder="اسم الشقة"><input type="text" id="location" placeholder="المنطقة"><input type="text" id="price" placeholder="السعر"><input type="text" id="space" placeholder="المساحة وعدد الغرف"><input type="text" id="image" placeholder="لينك الصورة"><textarea id="description" rows="5" placeholder="وصف الشقة"></textarea><button onclick="addProperty()">إضافة الشقة</button>
-
+<input type="password" id="adminPassword" placeholder="كلمة المرور">
+<button onclick="loginAdmin()">دخول</button>
+</div><div class="admin-panel" id="adminPanel">
+<input type="file" id="imageFile" accept="image/*">
+<input type="text" id="title" placeholder="اسم الشقة">
+<input type="text" id="location" placeholder="المنطقة">
+<input type="text" id="price" placeholder="السعر">
+<input type="text" id="space" placeholder="المساحة">
+<textarea id="description" placeholder="الوصف"></textarea>
+<button onclick="addProperty()">إضافة</button>
 </div>
-</section><section class="section" id="contact">
-<h2>تواصل معنا</h2><p style="text-align:center;font-size:20px;line-height:2;">
-📞 01206369219
-<br><br>
-💬 واتساب مباشر
-<br><br>
-👨‍💼 المهندس نديم محمود حسان
-</p><div style="text-align:center;margin-top:25px;">
-<a class="btn" href="https://wa.me/201206369219">راسلنا على واتساب</a>
-</div>
-</section><footer>
-<p>© 2026 KEYVERA جميع الحقوق محفوظة</p>
-</footer><a class="whatsapp" href="https://wa.me/201206369219">💬</a>
+</section><a class="whatsapp" href="https://wa.me/201206369219">💬</a>
 
 <script>
-
 const ADMIN_PASSWORD = "KEYVERA2026";
 
 function loginAdmin(){
-
-const password = document.getElementById('adminPassword').value;
-
-if(password === ADMIN_PASSWORD){
-
+const pass = document.getElementById('adminPassword').value;
+if(pass === ADMIN_PASSWORD){
 document.getElementById('adminPanel').style.display='block';
 document.getElementById('loginBox').style.display='none';
-
-alert('تم تسجيل الدخول');
-
 }else{
-alert('كلمة المرور غير صحيحة');
+alert('كلمة مرور غلط');
 }
 }
 
@@ -279,115 +237,75 @@ function getProperties(){
 return JSON.parse(localStorage.getItem('properties')) || [];
 }
 
-function saveProperties(properties){
-localStorage.setItem('properties', JSON.stringify(properties));
+function saveProperties(data){
+localStorage.setItem('properties', JSON.stringify(data));
 }
 
 function addProperty(){
-
+const file = document.getElementById('imageFile').files[0];
 const title = document.getElementById('title').value;
 const location = document.getElementById('location').value;
 const price = document.getElementById('price').value;
 const space = document.getElementById('space').value;
-const image = document.getElementById('image').value;
 const description = document.getElementById('description').value;
 
-if(!title || !price || !image){
+if(!title || !price){
 alert('اكمل البيانات');
 return;
 }
 
-const properties = getProperties();
-
-properties.push({
-title,
-location,
-price,
-space,
-image,
-description
-});
-
-saveProperties(properties);
-
-renderProperties();
-
-alert('تم إضافة الشقة');
-
-clearForm();
-}
-
-function clearForm(){
-document.getElementById('title').value='';
-document.getElementById('location').value='';
-document.getElementById('price').value='';
-document.getElementById('space').value='';
-document.getElementById('image').value='';
-document.getElementById('description').value='';
-}
-
-function deleteProperty(index){
+const reader = new FileReader();
+reader.onload = function(e){
+const img = e.target.result;
 
 const properties = getProperties();
-
-properties.splice(index,1);
-
+properties.push({title,location,price,space,description,image:img});
 saveProperties(properties);
+render();
+};
 
-renderProperties();
+if(file){
+reader.readAsDataURL(file);
+}else{
+alert('اختار صورة');
+}
 }
 
-function renderProperties(){
+function deleteProperty(i){
+const data = getProperties();
+data.splice(i,1);
+saveProperties(data);
+render();
+}
 
+function render(){
 const container = document.getElementById('propertiesContainer');
-
-const properties = getProperties();
-
+const data = getProperties();
 container.innerHTML='';
 
-if(properties.length === 0){
-container.innerHTML='<p style="text-align:center;width:100%;">لا توجد شقق حاليا</p>';
+if(data.length===0){
+container.innerHTML='<p>لا توجد شقق</p>';
 return;
 }
 
-properties.forEach((property,index)=>{
-
+data.forEach((p,i)=>{
 container.innerHTML += `
 <div class="card">
-
-<img src="${property.image}">
-
+<img src="${p.image}">
 <div class="card-content">
-
-<h3>${property.title}</h3>
-
-<p>📍 ${property.location}</p>
-
-<p>${property.space}</p>
-
-<p>${property.description}</p>
-
-<div class="price">${property.price}</div>
-
-<a class="btn" href="https://wa.me/201206369219?text=عايز%20استفسر%20عن%20${property.title}">
-تواصل الآن
-</a>
-
+<h3>${p.title}</h3>
+<p>${p.location}</p>
+<p>${p.space}</p>
+<p>${p.description}</p>
+<div class="price">${p.price}</div>
+<a class="btn" href="https://wa.me/201206369219">تواصل</a>
 <br>
-
-<button class="delete-btn" onclick="deleteProperty(${index})">
-حذف
-</button>
-
+<button class="delete-btn" onclick="deleteProperty(${i})">حذف</button>
 </div>
-
-</div>
-`;
-
+</div>`;
 });
 }
 
-renderProperties();
-
+render();
 </script></body>
 </html>
