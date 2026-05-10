@@ -1,161 +1,139 @@
-import { useEffect, useState } from "react"; import { initializeApp } from "firebase/app"; import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth"; import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, deleteDoc, updateDoc } from "firebase/firestore"; import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEYVERA Real Estate - Pro System</title><!-- Firebase --><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#0b0b0b;color:white;}
+header{background:#000;padding:25px;text-align:center;border-bottom:1px solid gold;}
+header img{width:90px;height:90px;object-fit:contain;margin-bottom:10px;}
+header h1{color:gold;letter-spacing:5px;}
+nav{background:#111;padding:12px;text-align:center;}
+nav a{color:gold;margin:0 12px;text-decoration:none;font-weight:bold;}
+.section{padding:50px 20px;max-width:1100px;margin:auto;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.card{background:#151515;border-radius:15px;overflow:hidden;}
+.card img{width:100%;height:200px;object-fit:cover;}
+.card-content{padding:15px;}
+.price{color:#00ffae;font-weight:bold;margin-top:10px;}
+.btn{display:inline-block;background:gold;color:#000;padding:8px 12px;border-radius:8px;text-decoration:none;margin-top:10px;}
+.admin-bar{background:#111;padding:10px;display:flex;gap:10px;justify-content:center;position:sticky;top:0;}
+.admin-bar input{padding:8px;border-radius:8px;border:none;background:#222;color:white;}
+.admin-bar button{padding:8px 12px;background:gold;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
+.admin-panel{display:none;background:#111;padding:20px;margin-top:20px;border-radius:15px;}
+.admin-panel input,.admin-panel textarea{width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none;background:#222;color:white;}
+.admin-panel button{width:100%;padding:12px;background:gold;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
+</style></head>
+<body><header>
+<img id="logo">
+<h1>KEYVERA</h1>
+<p>REAL ESTATE BROKERAGE</p>
+</header><!-- ADMIN LOGIN --><div class="admin-bar">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="logout()">Logout</button>
+</div><nav>
+<a href="#properties">الشقق</a>
+<a href="#admin">الإدارة</a>
+</nav><section class="section" id="properties">
+<h2 style="text-align:center;color:gold">العقارات</h2>
+<div class="cards" id="list"></div>
+</section><section class="section" id="admin">
+<div class="admin-panel" id="panel">
+<h3 style="color:gold;text-align:center">لوحة التحكم</h3>
+<input type="file" id="img">
+<input type="file" id="logoFile">
+<input id="title" placeholder="العنوان">
+<input id="price" placeholder="السعر">
+<input id="location" placeholder="الموقع">
+<textarea id="desc" placeholder="الوصف"></textarea>
+<button onclick="add()">إضافة</button>
+</div>
+</section><script>
 
-/* ================= FIREBASE ================= */ const firebaseConfig = { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID", storageBucket: "YOUR_STORAGE_BUCKET", appId: "YOUR_APP_ID" };
-
-const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app); const storage = getStorage(app);
-
-/* ================= APP ================= */ export default function App() { const [user, setUser] = useState(null); const [role, setRole] = useState(null); const [menu, setMenu] = useState(false); const [properties, setProperties] = useState([]);
-
-const [email, setEmail] = useState(""); const [password, setPassword] = useState("");
-
-const [title, setTitle] = useState(""); const [price, setPrice] = useState(""); const [location, setLocation] = useState(""); const [desc, setDesc] = useState(""); const [image, setImage] = useState(null); const [editId, setEditId] = useState(null);
-
-const [empEmail, setEmpEmail] = useState(""); const [empPass, setEmpPass] = useState("");
-
-/* ================= AUTH ================= */ useEffect(() => { onAuthStateChanged(auth, async (u) => { setUser(u); if (u) { const snap = await getDoc(doc(db, "users", u.uid)); setRole(snap.exists() ? snap.data().role : null); } else setRole(null); }); }, []);
-
-/* ================= LOAD PROPERTIES ================= */ useEffect(() => { const q = query(collection(db, "properties"), orderBy("time", "desc")); return onSnapshot(q, (snap) => { setProperties(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); }, []);
-
-/* ================= AUTH ACTIONS ================= */ const login = async () => { await signInWithEmailAndPassword(auth, email, password); };
-
-const logout = async () => { await signOut(auth); };
-
-/* ================= ADMIN CHECK ================= */ const isAdmin = role === "admin";
-
-/* ================= PROPERTY CRUD ================= */ const saveProperty = async () => { if (!isAdmin) return alert("No permission");
-
-let imgUrl = "";
-if (image) {
-  const r = ref(storage, "props/" + image.name);
-  await uploadBytes(r, image);
-  imgUrl = await getDownloadURL(r);
-}
-
-const data = {
-  title,
-  price,
-  location,
-  desc,
-  image: imgUrl,
-  time: Date.now()
+// Firebase Config (ضع بياناتك هنا)
+const firebaseConfig = {
+apiKey: "YOUR_KEY",
+authDomain: "YOUR_DOMAIN",
+projectId: "YOUR_ID",
+storageBucket: "YOUR_BUCKET",
+appId: "YOUR_APP"
 };
 
-if (editId) {
-  await updateDoc(doc(db, "properties", editId), data);
-  setEditId(null);
-} else {
-  await addDoc(collection(db, "properties"), data);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// AUTH
+function login(){
+const email = email.value;
+const pass = password.value;
+auth.signInWithEmailAndPassword(email,pass)
+.then(()=>{
+document.getElementById('panel').style.display='block';
+alert('Logged in');
+});
 }
 
-setTitle(""); setPrice(""); setLocation(""); setDesc(""); setImage(null);
+function logout(){auth.signOut();document.getElementById('panel').style.display='none';}
 
-};
-
-const editProperty = (p) => { setEditId(p.id); setTitle(p.title); setPrice(p.price); setLocation(p.location); setDesc(p.desc); };
-
-const deleteProperty = async (id) => { if (!isAdmin) return; await deleteDoc(doc(db, "properties", id)); };
-
-/* ================= EMPLOYEES ================= */ const createEmployee = async () => { if (!isAdmin) return;
-
-const cred = await createUserWithEmailAndPassword(auth, empEmail, empPass);
-
-await setDoc(doc(db, "users", cred.user.uid), {
-  role: "employee"
+auth.onAuthStateChanged(user=>{
+if(user){document.getElementById('panel').style.display='block';}else{document.getElementById('panel').style.display='none';}
 });
 
-alert("Employee Created");
+// ADD PROPERTY
+function add(){
+const file = img.files[0];
+const ref = storage.ref('images/'+file.name);
+ref.put(file).then(()=>{
+ref.getDownloadURL().then(url=>{
+db.collection('properties').add({
+title:title.value,
+price:price.value,
+location:location.value,
+desc:desc.value,
+image:url
+});
+load();
+});
+});
+}
 
+// LOAD
+function load(){
+db.collection('properties').onSnapshot(snap=>{
+list.innerHTML='';
+snap.forEach(doc=>{
+const d = doc.data();
+list.innerHTML+=`
+<div class="card">
+<img src="${d.image}">
+<div class="card-content">
+<h3>${d.title}</h3>
+<p>${d.location}</p>
+<p>${d.desc}</p>
+<div class="price">${d.price}</div>
+<a class="btn" href="https://wa.me/201206369219">تواصل</a>
+</div>
+</div>`;
+});
+});
+}
+
+load();
+
+// LOGO
+logoFile.onchange=()=>{
+const file = logoFile.files[0];
+const ref = storage.ref('logo/'+file.name);
+ref.put(file).then(()=>{
+ref.getDownloadURL().then(url=>{
+logo.src=url;
+});
+});
 };
 
-return ( <div style={{ background: "#0b0b0b", color: "white", minHeight: "100vh" }}>
-
-{/* ================= HEADER ================= */}
-  <header style={{ display: "flex", justifyContent: "space-between", padding: 20 }}>
-    <h1 style={{ color: "gold" }}>KEYVERA</h1>
-    <div>
-      <button onClick={() => setMenu(!menu)} style={{ fontSize: 20 }}>☰</button>
-    </div>
-  </header>
-
-  {/* ================= MENU ================= */}
-  {menu && (
-    <div style={{ position: "absolute", right: 20, top: 70, background: "#111", padding: 15 }}>
-      <button onClick={() => document.getElementById('login').scrollIntoView({behavior:'smooth'})}>Login</button>
-      <button onClick={() => document.getElementById('list').scrollIntoView({behavior:'smooth'})}>Properties</button>
-    </div>
-  )}
-
-  {/* ================= HERO ================= */}
-  <div style={{ textAlign: "center", padding: 60 }}>
-    <h1 style={{ color: "gold", fontSize: 55 }}>KEYVERA</h1>
-    <h2>REAL ESTATE BROKERAGE</h2>
-    <p>Luxury Properties in Egypt</p>
-  </div>
-
-  {/* ================= LOGIN ================= */}
-  <div id="login" style={{ padding: 20 }}>
-    {!user ? (
-      <div>
-        <h2>Login</h2>
-        <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-        <button onClick={login}>Login</button>
-      </div>
-    ) : (
-      <div>
-        <p>Role: {role}</p>
-        <button onClick={logout}>Logout</button>
-      </div>
-    )}
-  </div>
-
-  {/* ================= ADMIN PANEL ================= */}
-  {isAdmin && (
-    <div style={{ border: "1px solid gold", margin: 20, padding: 20 }}>
-      <h2>Admin Dashboard</h2>
-
-      <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
-      <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
-      <input placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} />
-      <textarea placeholder="Description" value={desc} onChange={e => setDesc(e.target.value)} />
-      <input type="file" onChange={e => setImage(e.target.files[0])} />
-
-      <button onClick={saveProperty}>{editId ? "Update" : "Add"}</button>
-
-      <h3>Create Employee</h3>
-      <input placeholder="Email" onChange={e => setEmpEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e => setEmpPass(e.target.value)} />
-      <button onClick={createEmployee}>Create</button>
-    </div>
-  )}
-
-  {/* ================= PROPERTIES ================= */}
-  <div id="list" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))", gap: 20, padding: 20 }}>
-    {properties.map(p => (
-      <div key={p.id} style={{ background: "#111", padding: 10, borderRadius: 10 }}>
-        <img src={p.image} style={{ width: "100%", height: 180 }} />
-        <h3 style={{ color: "gold" }}>{p.title}</h3>
-        <p>{p.location}</p>
-        <p>{p.desc}</p>
-        <h4 style={{ color: "#00ffae" }}>{p.price}</h4>
-
-        <a href={`https://wa.me/201206369219?text=Interested in ${p.title}`}>WhatsApp</a>
-
-        {isAdmin && (
-          <div>
-            <button onClick={() => editProperty(p)}>Edit</button>
-            <button onClick={() => deleteProperty(p.id)}>Delete</button>
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-
-  {/* ================= WHATSAPP FLOAT ================= */}
-  <a href="https://wa.me/201206369219" style={{ position: "fixed", bottom: 20, left: 20, background: "#25D366", padding: 15, borderRadius: 50, color: "white" }}>
-    WhatsApp
-  </a>
-
-</div>
-
-); }
+</script></body>
+</html>
